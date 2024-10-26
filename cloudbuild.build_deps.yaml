@@ -1,0 +1,29 @@
+substitutions:
+  _RUNNER_IMAGE: image-caption-gpu-deps:latest
+steps:
+  - id: upgrade-pip
+    name: python:3.10-slim
+    entrypoint: pip
+    args: [ "install", "--upgrade", "pip" ]
+  - id: install-dependencies
+    name: python:3.10-slim
+    entrypoint: pip
+    args: [ "install", "-r", "requirements.txt", "--user", "--no-warn-script-location"]
+  - id: build-runner
+    name: gcr.io/cloud-builders/docker
+    args: [
+      "build",
+      "-t",
+      "gcr.io/${PROJECT_ID}/${_RUNNER_IMAGE}",
+      ".",
+      "--network=cloudbuild"
+    ]
+
+images: [
+  "us-central1-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_RUNNER_IMAGE}",
+]
+
+options:
+  machineType: E2_HIGHCPU_8
+
+timeout: 1800s

@@ -1,0 +1,29 @@
+substitutions:
+  _REPOSITORY: custom-jobs
+  _FLEX_BASE_IMAGE: image-caption-gpu-flex-base:latest
+
+steps:
+  - id: build-flex-base
+    name: gcr.io/cloud-builders/docker
+    args: [
+      "build",
+      "--build-arg",
+      "PROJECT_ID=${PROJECT_ID}",
+      "REPOSITORY=${_REPOSITORY}",
+      "RUNNER_IMAGE=image-caption-gpu-deps",
+      "-f",
+      "DockerfileFlex",
+      "-t",
+      "gcr.io/${PROJECT_ID}/${_FLEX_BASE_IMAGE}",
+      ".",
+      "--network=cloudbuild",
+    ]
+
+images: [
+  "us-central1-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_FLEX_BASE_IMAGE}",
+]
+
+options:
+  machineType: E2_HIGHCPU_8
+
+timeout: 1800s

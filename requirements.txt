@@ -1,0 +1,14 @@
+keyring
+keyrings.google-artifactregistry-auth
+apache-beam[gcp]==2.59.0
+
+torch==2.3.0
+Pillow
+accelerate
+transformers==4.33.0
+
+google-cloud-bigquery
+tenacity
+lit
+cmake
+loguru

@@ -1,0 +1,52 @@
+substitutions:
+  _REPOSITORY: "custom-jobs"
+  _FLEX_BASE_IMAGE: image-caption-gpu-flex-base:latest
+  _FLEX_IMAGE: image-caption-gpu-flex:latest # This is the final output image name
+
+steps:
+  - id: build-runner-drive
+    name: gcr.io/google.com/cloudsdktool/google-cloud-cli:slim
+    entrypoint: gcloud
+    args: [
+      "builds",
+      "submit",
+      "--config",
+      "cloudbuild.build_deps.yaml"
+    ]
+  - id: build-flex-base-drive
+    name: gcr.io/google.com/cloudsdktool/google-cloud-cli:slim
+    entrypoint: gcloud
+    args: [
+      "builds",
+      "submit",
+      "--config",
+      "cloudbuild.build_flex_base.yaml"
+    ]
+  - id: build-flex
+    name: gcr.io/google.com/cloudsdktool/google-cloud-cli:slim
+    # This step automatically triggers a separate GCB pipeline and pushes its image,
+    # thus we don't need to push it in the `images` config below.
+    entrypoint: gcloud
+    args: [
+      "dataflow",
+      "flex-template",
+      "build",
+      "gs://${PROJECT_ID}-dataflow-templates/dataflow/templates/image-caption-gpu-flex.json", # output template json
+      "--image-gcr-path",
+      "us-central1-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_FLEX_IMAGE}",
+      "--sdk-language",
+      "PYTHON",
+      "--flex-template-base-image",
+      "us-central1-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_FLEX_BASE_IMAGE}",
+      "--py-path",
+      ".",
+      "--env",
+      "FLEX_TEMPLATE_PYTHON_PY_FILE=main.py",
+      "--env",
+      "FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE=requirements.txt",
+    ]
+
+options:
+  machineType: E2_HIGHCPU_8
+
+timeout: 1800s
