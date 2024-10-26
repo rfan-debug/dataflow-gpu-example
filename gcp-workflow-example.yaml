@@ -11,6 +11,9 @@ main:
           - jobId: "workflow-dataflow-flex-run"
     - run_flex_dataflow_job:
         call: googleapis.dataflow.v1b3.projects.locations.flexTemplates.launch
+        # If you use `projects.locations.flexTemplates.launch`, you can directly pass the json template to `containerSpecGcsPath`
+        # and waive all the parameters and runtime settings.
+        # I didn't know this^ convenient API when i was writing this GCP workflow.
         result: launchResult
         args:
           location: ${location}

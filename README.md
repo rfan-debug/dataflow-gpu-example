@@ -37,6 +37,8 @@ python main.py
 
 3. Use your both images above to build a launch-able Dataflow flex template. (`build_flex.yaml`)
 
+4. (Optional) Orchestrate it on [GCP workflow](https://cloud.google.com/workflows?hl=en). 
+
 ## Refernece
 
 + [Dataflow flex template](https://cloud.google.com/dataflow/docs/guides/templates/using-flex-templates)
